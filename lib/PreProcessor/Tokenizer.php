@@ -97,7 +97,17 @@ class Tokenizer {
                         case 'x':
                             $value = chr(intval(substr($buffer, 2), 16));
                             break;
-                        default: 
+                        case 'n' :
+                            $value = '\n';
+                            break;
+                        case '\'' :
+                            $value = '\'';
+                            break;
+                        case '\\' :
+                            $value = '\\';
+                            break;
+                        default:
+                            var_dump($buffer[1]);
                             throw new \LogicException("Unknown character literal escape sequence: " . var_export($buffer, true));
                     }
                 } elseif (strlen($buffer) === 1) {

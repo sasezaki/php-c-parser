@@ -304,8 +304,10 @@ result:
             goto result;
         } elseif ($expr->value === '?') {
             // Ternary
+            $prevExpr = $expr;
             list ($if, $expr) = $this->evaluateInternal($expr->next, true);
             if ($expr === null || $expr->value !== ':' || $expr->next === null) {
+                var_dump($prevExpr->value, $expr->value, $prevExpr);
                 throw new \LogicException('Syntax Error: expecting ": EXPR" in ternary expression');
             }
             list ($else, $expr) = $this->evaluateInternal($expr->next, true);
