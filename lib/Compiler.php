@@ -59,7 +59,7 @@ restart:
             $qualifiers = 0;
             goto restart;
         } else {
-            var_dump($declaration);
+//            var_dump($declaration);
             throw new \LogicException("Not implmented yet");
         }
         return $result;

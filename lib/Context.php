@@ -36,7 +36,8 @@ class Context {
     private function locateGCCHeaderPaths() {
         if (is_dir('/usr/lib/gcc/x86_64-linux-gnu/')) {
             for ($i = 8; $i > 4; $i--) {
-                if (is_dir('/usr/lib/gcc/x86_64-linux-gnu/' . $i)) {
+                if (is_dir('/usr/lib/gcc/x86_64-linux-gnu/' . $i) &&
+                    is_dir('/usr/lib/gcc/x86_64-linux-gnu/' . $i . '/include')) {
                     $this->headerSearchPaths[] = '/usr/lib/gcc/x86_64-linux-gnu/' . $i . '/include';
                     return;
                 }
@@ -221,6 +222,7 @@ restart:
             $result = new Token(Token::NUMBER, $expr->value, 'computed');
             $expr = Token::skipWhitespace($expr->next);
         } else {
+//            var_dump($expr);
             throw new \LogicException('Unknown operator ' . $expr->value);
         }
         if ($negate) {
@@ -305,12 +307,22 @@ result:
         } elseif ($expr->value === '?') {
             // Ternary
             $prevExpr = $expr;
+            /** @var Token|null $expr */
             list ($if, $expr) = $this->evaluateInternal($expr->next, true);
             if ($expr === null || $expr->value !== ':' || $expr->next === null) {
-                var_dump($prevExpr->value, $expr->value, $prevExpr);
+//                var_dump($prevExpr->value, $expr->value, $prevExpr);
+                if ($expr->value === '>' && $expr->next->value === '=') {
+//                    $expr = $expr->next->next->next->next;
+//                    var_dump($expr);
+                    goto DEFINE_ELSE;
+                }
                 throw new \LogicException('Syntax Error: expecting ": EXPR" in ternary expression');
             }
+            DEFINE_ELSE:
+//            var_dump($expr->value);
             list ($else, $expr) = $this->evaluateInternal($expr->next, true);
+
+
             $result = $this->normalize($result) === 0 ? $else : $if;
             goto result;
         } elseif ($expr->type === Token::LITERAL) {
@@ -395,7 +407,7 @@ result:
                 if ($token->type !== Token::IDENTIFIER) {
                     throw new \LogicException('Unexpected argument found, expecting IDENTIFIER found ' . $token->value);
                 } elseif (!array_key_exists($argIdx, $args)) {
-                    var_dump($args);
+//                    var_dump($args);
                     throw new \LogicException("Unexpected argument count, $toCall expects at least " . ($argIdx + 1) . " arguments, " . count($args) . " found");
                 }
                 $argMap[$token->value] = $args[$argIdx++];

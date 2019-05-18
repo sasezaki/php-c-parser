@@ -107,7 +107,7 @@ class Tokenizer {
                             $value = '\\';
                             break;
                         default:
-                            var_dump($buffer[1]);
+//                            var_dump($buffer[1]);
                             throw new \LogicException("Unknown character literal escape sequence: " . var_export($buffer, true));
                     }
                 } elseif (strlen($buffer) === 1) {

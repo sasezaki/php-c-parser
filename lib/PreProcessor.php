@@ -188,6 +188,13 @@ class PreProcessor {
         $contextDir = rtrim($contextDir, '/');
         $file = $this->findHeaderFile($header, $contextDir, $contextFile);
         $code = file_get_contents($file);
+
+        // hack
+        if ($file === '/usr/include/features.h') {
+            $code = str_replace('#if defined __cplusplus ? __cplusplus >= 201402L : defined __USE_ISOC11',
+                '#if defined __USE_ISOC11', $code);
+        }
+
         $lines = $this->parser->parse($file, $code);
         return $lines;
     }
@@ -247,7 +254,7 @@ class PreProcessor {
                 }
             }
         }
-        var_dump($this->context->headerSearchPaths);
+        //var_dump($this->context->headerSearchPaths);
         throw new \LogicException("Could not find header file: $header given context $contextDir (called from $contextFile)");
     }
 
