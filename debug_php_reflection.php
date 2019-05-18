@@ -10,9 +10,6 @@ $context = new PHPCParser\Context([
     "{$phpsrc}/main", "{$phpsrc}/Zend", "{$phpsrc}/ext/reflection",
 ]);
 
-//$context
-
 $parser = new PHPCParser\CParser();
-/** @var PHPCParser\Context $ast */
 $ast = $parser->parse(__DIR__.'/../../php-src-7.4/ext/reflection/php_reflection.c', $context);
-//var_dump(array_keys($ast->getDefines()));
+var_dump($ast);
